@@ -178,3 +178,41 @@ INSERT INTO PERSON_SCHICHT (PersonID, SchichtID, Aufgabe, Rufbereitschaft) VALUE
 INSERT INTO ABWESENHEIT (AbwesenheitID, PersonID, Grund, Status, Startdatum, Enddatum) VALUES
 (9001,6,'Urlaub','genehmigt','2025-08-14','2025-08-20'),
 (9002,10,'Fortbildung','genehmigt','2025-08-15','2025-08-16');
+
+
+- ==============================
+-- Aufgabe 4c – Abfragen
+-- (i) Projektion, (ii) Selektion, (iii) Join
+-- ==============================
+
+-- 4c (i) Projektion: Zeige nur Name und Berufsgruppe aller Personen (alphabetisch sortiert)
+SELECT Name, Berufsgruppe
+FROM PERSON
+ORDER BY Name;
+
+-- 4c (ii) Selektion: Alle Schichten, deren Leiter/Leiterin Dr. Funda Korkmaz ist
+SELECT s.SchichtID, 
+       s.Schichtart, 
+       s.Startzeitpunkt, 
+       s.Endzeit,
+       p.Name AS Leiter
+FROM SCHICHT s
+JOIN PERSON p ON p.PersonID = s.PersonID
+WHERE p.Name = 'Dr. Funda Korkmaz'
+ORDER BY s.Startzeitpunkt;
+
+-- 4c (iii) Join: Einsatzübersicht für die Frühschicht (SchichtID = 101) mit Aufgaben und Räumen
+SELECT p.Name,
+       p.Berufsgruppe,
+       ps.Aufgabe,
+       ps.Rufbereitschaft,
+       r.Raumnummer,
+       r.Funktion
+FROM PERSON_SCHICHT ps
+JOIN PERSON p  ON p.PersonID = ps.PersonID
+JOIN SCHICHT s ON s.SchichtID = ps.SchichtID
+LEFT JOIN SCHICHT_RAUM sr ON sr.SchichtID = s.SchichtID
+LEFT JOIN RAUM r ON r.RaumID = sr.RaumID
+WHERE s.SchichtID = 101
+ORDER BY p.Name, r.Raumnummer;
+
